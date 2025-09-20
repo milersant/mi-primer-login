@@ -7,8 +7,14 @@ const biometricButton = document.getElementById('biometricButton');
 const registerButton = document.getElementById('registerButton');
 const message = document.getElementById('message');
 
-// Muestra el botón de registro solo si el navegador soporta la API de WebAuthn.
-if ('credentials' in navigator) {
+// Nuevo código para el acceso directo si la credencial ya está registrada
+// Verifica si el navegador soporta WebAuthn y si el usuario ya registró su huella
+if ('credentials' in navigator && localStorage.getItem('biometric_registered') === 'true') {
+    // Si ambas condiciones son verdaderas, redirige al usuario directamente
+    // a la página de bienvenida, sin pedir la huella de nuevo.
+    window.location.href = 'bienvenido.html';
+} else if ('credentials' in navigator) {
+    // Si no está registrada, pero el navegador lo soporta, muestra el botón de registro
     registerButton.style.display = 'block';
 }
 
@@ -22,7 +28,7 @@ loginForm.addEventListener('submit', (e) => {
         // Oculta el formulario de login y muestra el de la verificación biométrica.
         loginForm.style.display = 'none';
         biometricPrompt.style.display = 'block';
-        registerButton.style.display = 'none'; // Oculta también el botón de registro
+        registerButton.style.display = 'none';
         message.textContent = 'Usuario y contraseña correctos. Ahora, verificación biométrica...';
     } else {
         message.textContent = 'Usuario o contraseña incorrectos.';
@@ -35,7 +41,7 @@ biometricButton.addEventListener('click', async () => {
         const credential = await navigator.credentials.get({
             publicKey: {
                 challenge: new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]),
-                rpId: window.location.hostname, // Se usa el dominio actual para evitar errores de coincidencia.
+                rpId: window.location.hostname, // Se usa el dominio actual.
                 user: {
                     id: new Uint8Array([1, 2, 3, 4]),
                     name: 'miler',
@@ -45,11 +51,10 @@ biometricButton.addEventListener('click', async () => {
             }
         });
         
-        // Si no hay errores, significa que la verificación fue exitosa y se redirige.
+        // Si no hay errores, la verificación fue exitosa y se redirige.
         window.location.href = 'bienvenido.html';
 
     } catch (err) {
-        // Muestra un mensaje de error si la verificación falla o es cancelada.
         message.textContent = '❌ Verificación biométrica fallida o cancelada.';
         console.error(err);
     }
@@ -71,6 +76,9 @@ registerButton.addEventListener('click', async () => {
                 pubKeyCredParams: [{ type: "public-key", alg: -7 }]
             }
         });
+
+        // Almacena una bandera en localStorage para recordar que el registro fue exitoso
+        localStorage.setItem('biometric_registered', 'true');
         message.textContent = "✅ Credencial biométrica registrada con éxito. ¡Ya puedes iniciar sesión!";
     } catch (err) {
         message.textContent = "❌ Fallo al registrar la credencial.";
