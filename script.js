@@ -12,21 +12,14 @@ loginForm.addEventListener('submit', (e) => {
     const password = passwordInput.value;
 
     if (username === 'miler' && password === '1234') {
-        // Redirige a la página de bienvenida si las credenciales son correctas
-        window.location.href = 'bienvenido.html';
+        // Oculta el formulario de login y muestra el de la verificación biométrica
+        loginForm.style.display = 'none';
+        biometricPrompt.style.display = 'block';
+        message.textContent = 'Usuario y contraseña correctos. Ahora, verificación biométrica...';
     } else {
         message.textContent = 'Usuario o contraseña incorrectos.';
     }
 });
-
-// Este bloque ya no es necesario si la redirección es inmediata
-// Puedes eliminarlo para simplificar el flujo.
-
-/*
-biometricButton.addEventListener('click', async () => {
-    // Código de autenticación biométrica anterior...
-});
-*/
 
 // Maneja el segundo paso: autenticación biométrica
 biometricButton.addEventListener('click', async () => {
@@ -46,9 +39,8 @@ biometricButton.addEventListener('click', async () => {
                 }
             });
 
-            // Si la autenticación es exitosa
-            message.textContent = '🎉 ¡Acceso concedido! Bienvenido, Miler.';
-            biometricPrompt.style.display = 'none';
+            // Si la autenticación biométrica es exitosa, redirige al usuario
+            window.location.href = 'bienvenido.html';
 
         } catch (err) {
             message.textContent = '❌ Verificación biométrica fallida o cancelada.';
