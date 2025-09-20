@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Banco</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+    </style>
+</head>
+<body>
+    <h2>Banco</h2>
+    <label>Selecciona usuario:</label>
+    <select id="user-select"></select>
+    <p>Saldo actual: <span id="saldo-display"></span></p>
+
+    <form id="deposit-form">
+        <label>Abonar cantidad:</label>
+        <input type="number" id="cantidad" required>
+        <button type="submit">Abonar</button>
+    </form>
+
+    <script src="banco.js"></script>
+</body>
+</html>
