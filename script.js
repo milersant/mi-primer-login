@@ -7,14 +7,12 @@ const biometricButton = document.getElementById('biometricButton');
 const registerButton = document.getElementById('registerButton');
 const message = document.getElementById('message');
 
-// Observación: Muestra el botón de registro solo si el navegador soporta la API de WebAuthn.
-// Esto evita que los usuarios vean un botón que no funciona en sus dispositivos.
+// Muestra el botón de registro solo si el navegador soporta la API de WebAuthn.
 if ('credentials' in navigator) {
     registerButton.style.display = 'block';
 }
 
-// Observación: Esta es la primera etapa del login. Maneja la verificación
-// del usuario y la contraseña. Si son correctos, pasa a la etapa de autenticación biométrica.
+// Maneja el primer paso: usuario y contraseña
 loginForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const username = usernameInput.value;
@@ -22,19 +20,16 @@ loginForm.addEventListener('submit', (e) => {
 
     if (username === 'miler' && password === '1234') {
         // Oculta el formulario de login y muestra el de la verificación biométrica.
-        // Es crucial que el usuario haga esta etapa primero.
         loginForm.style.display = 'none';
         biometricPrompt.style.display = 'block';
-        registerButton.style.display = 'none';
+        registerButton.style.display = 'none'; // Oculta también el botón de registro
         message.textContent = 'Usuario y contraseña correctos. Ahora, verificación biométrica...';
     } else {
         message.textContent = 'Usuario o contraseña incorrectos.';
     }
 });
 
-// Observación: Este es el código que verifica la huella o el rostro del usuario.
-// La API `navigator.credentials.get()` busca una credencial (Passkey) guardada en el dispositivo.
-// Si la encuentra y la verificación es exitosa, se redirige a la página de bienvenida.
+// Maneja el segundo paso: autenticación biométrica
 biometricButton.addEventListener('click', async () => {
     try {
         const credential = await navigator.credentials.get({
@@ -50,7 +45,7 @@ biometricButton.addEventListener('click', async () => {
             }
         });
         
-        // Si no hay errores, significa que la verificación fue exitosa.
+        // Si no hay errores, significa que la verificación fue exitosa y se redirige.
         window.location.href = 'bienvenido.html';
 
     } catch (err) {
@@ -60,11 +55,8 @@ biometricButton.addEventListener('click', async () => {
     }
 });
 
-// Observación: Esta es la pieza clave para solucionar el error.
-// El método `navigator.credentials.create()` crea una nueva "llave de acceso"
-// (o Passkey) en el dispositivo. Esta es la que se guarda de forma permanente
-// y la que el segundo botón (`biometricButton`) buscará después.
-// Este proceso solo necesita hacerse una vez por dispositivo.
+// Maneja el proceso de registro de la credencial biométrica
+// Este paso es crucial y solo se debe hacer una vez por dispositivo.
 registerButton.addEventListener('click', async () => {
     try {
         const credential = await navigator.credentials.create({
