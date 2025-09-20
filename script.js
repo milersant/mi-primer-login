@@ -3,7 +3,6 @@ const usernameInput = document.getElementById('username');
 const passwordInput = document.getElementById('password');
 const message = document.getElementById('message');
 
-// Maneja el primer paso: usuario y contraseña
 loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const username = usernameInput.value;
@@ -12,11 +11,9 @@ loginForm.addEventListener('submit', async (e) => {
     if (username === 'miler' && password === '1234') {
         message.textContent = 'Usuario y contraseña correctos. Registrando tu huella/rostro...';
         
-        // Verifica si el navegador soporta autenticación biométrica
         if ('credentials' in navigator) {
             try {
                 // Inicia el proceso de registro de la credencial biométrica
-                // Esto hará que el dispositivo pida al usuario su huella o rostro
                 const credential = await navigator.credentials.create({
                     publicKey: {
                         rp: { id: window.location.hostname, name: "Login App" },
@@ -34,7 +31,7 @@ loginForm.addEventListener('submit', async (e) => {
                 window.location.href = 'bienvenido.html';
 
             } catch (err) {
-                // Si el registro falla o es cancelado, muestra un error y evita la redirección
+                // Si el registro falla o es cancelado, muestra un error
                 message.textContent = '❌ Fallo al registrar la credencial biométrica.';
                 console.error(err);
             }
